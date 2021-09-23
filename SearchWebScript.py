@@ -243,6 +243,8 @@ class SearchWeb():
       if self.saveFile:
         self._startFile()
       
+      print('[_runtime]>> Start searching...')
+      
       res = pool.map(self._query, pages)
       self.codes = [[x[0], x[1],x[0].status_code] for x in res]
       resultData = pd.DataFrame(self.codes, columns=["Response", "Page", "Code"])
@@ -256,8 +258,8 @@ class SearchWeb():
         break
       else:
         print("Bad call of pages:")
-        self._data(resultData.query("Code == 200"))
-              # self.datasource.append(resultData.query("Code ==200"))
+        # self._data(resultData.query("Code == 200"))
+        # self.datasource.append(resultData.query("Code ==200"))
         pages = resultData.query("Code !=200").index.values.tolist()
         print(pages)
         print(f"Tentando de novo daqui a {self.sleeptry/60} min...")
@@ -316,6 +318,8 @@ class SearchWeb():
 #      }
 ##### Params that can pass in SearchWeb(params = value): #####
 # data = '''{
+#     "sleeptry": 3 (seconds)
+#     "poolCPU": 4 (Number of clusters, CPU)
 #     "save": False
 #     "queryString": "Machine Learning+Deep Learning",
 #     "sort": "total-citations", #influence #"pub-date" #relevance
@@ -387,5 +391,5 @@ class SearchWeb():
 # Ex. {"venues": []}
 
 ### Discoment here to have a script
-# if __name__ == '__main__':
-#   SearchWeb().get()
+if __name__ == '__main__':
+  SearchWeb().get(2000)
