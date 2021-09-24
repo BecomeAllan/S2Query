@@ -123,7 +123,7 @@ class SearchWeb():
       
 
   def _json(self, res):
-    print(res.text)
+#     print(res.text)
     return json.loads(res.text).copy()
 
     # c['querySuggestions']
@@ -481,7 +481,7 @@ if __name__ == '__main__':
   SearchWeb(
     search= "decision making+optimization+artificial intelligence",
     sort= "influence",
-    Savename = "influence",
+    Savename = "influence_data",
     save=True,
     poolCPU = 4,
     sleeptry = 3.5*60,
