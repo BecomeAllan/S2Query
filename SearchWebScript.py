@@ -136,10 +136,10 @@ class SearchWeb():
     except:
       print("[Save]>> Error to save the data.")
   
-  def load_json(self, path, data):
+  def load_json(self, path):
     try:
       with open(f'{path}', 'r', encoding='UTF-8') as fp:
-          return json.dump(data, fp)
+          return json.load(fp)
     except:
       print("[load_json]>> Error to load json file.")
     
