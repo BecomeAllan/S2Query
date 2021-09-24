@@ -28,10 +28,11 @@ class SearchWeb():
      
     self.sleeptry = sleeptry
     self.poolCPU = poolCPU
+    self.saveName = kwargs.get('Savename', "Data")
+
     self.badcall = []
     self._start = True
 
-    self.saveName = kwargs.get('Savename', "Data")
     self.saveFile = save
     self._search = search
     self._sort = kwargs.get('sort', "relevance")
@@ -75,17 +76,7 @@ class SearchWeb():
     "getQuerySuggestions": self._getQuerySuggestions,
     }
 
-    print('.post >>')
-    print(self.post)
-
-  def _query(self, page):
-    url = "https://www.semanticscholar.org/api/1/search"
-    post = self.post.copy()
-    post["page"] = page
-    return [requests.post(url, json=post), page ]
-
-  def _json(self, res):
-    return json.loads(res.text).copy()
+  
   
   def _paperExtract(self, data):
     p = {
@@ -119,81 +110,111 @@ class SearchWeb():
         }
     return p
 
-    
+  def _query(self, page):
+    url = "https://www.semanticscholar.org/api/1/search"
+    post = self.post.copy()
+    post["page"] = page
+    try:
+      res = requests.post(url, json=post, timeout=15)
+      res.encoding = 'utf-8'
+      return [res, page]
+    except:
+      return [{"status_code": 400}, page ]
+      
+
+  def _json(self, res):
+    print(res.text)
+    return json.loads(res.text).copy()
 
     # c['querySuggestions']
     # c['totalPages']
     # c['totalResults']
   def save(self, name, data):
     try:
-      with open(f'./{name}.json', 'w') as fp:
+      with open(f'./{name}.json', 'w',encoding='UTF-8') as fp:
           json.dump(data, fp)
     except:
       print("[Save]>> Error to save the data.")
   
-  def load_json(self, path):
+  def load_json(self, path, data):
     try:
-      with open('path', 'r') as fp:
+      with open(f'{path}', 'r', encoding='UTF-8') as fp:
           return json.dump(data, fp)
     except:
       print("[load_json]>> Error to load json file.")
     
-  def _startFile(self):
-    my_file = Path(f"./{self.saveName}.json")
-    print()
+  def _startFile(self, find):
+    jsonFile = Path(f"./{self.saveName}.json")
+    textFile = Path(f"./{self.saveName}.text")
     
-    if my_file.is_file():
-      try:
-        with open(f'./{self.saveName}.json') as f:
+    if jsonFile.is_file():
+      if find:
+        try:
           print(f"[_startFile] >> Loading ./{self.saveName}.json")
-          data = json.load(f)
-        with open(f'./{self.saveName}.text', 'w') as fp:
-          fp.write("{\"Results\": [")
-        print(f"[Create] >> Creating a ./{self.saveName}.text file to save data.")
+          with open(f'./{self.saveName}.json', 'r',encoding='UTF-8') as f:
+            data = json.load(f)
+          print(f"[Create] >> Creating a ./{self.saveName}.text file to save data.")
+          with open(f'./{self.saveName}.text', 'w',encoding='UTF-8') as fp:
+            fp.write("{\"Results\": [")
         
-        self._save(data['Results'])
-      except:
-        print(f"[_startFile] >> Fail to load ./{self.saveName}.json")
+        # print(data['Results'])
+          self._save(data['Results'])
+        except:
+          print(f"[_startFile] >> Fail to load ./{self.saveName}.json")
+          try:
+            # print(f"[Create] >> Creating a ./{self.saveName}.text file to save data.")
+            with open(f'./{self.saveName}.text', 'w', encoding='UTF-8') as fp:
+              fp.write("{\"Results\": [")
+          except:
+            print("[Create] >> Fail")
+      else:
+        return False
     else:
       try:
-        with open(f'./{self.saveName}.text', 'w') as fp:
-          fp.write("{\"Results\": [")
         print(f"[Create] >> Creating a ./{self.saveName}.text file to save data.")
+        with open(f'./{self.saveName}.text', 'w',encoding='UTF-8') as fp:
+          fp.write("{\"Results\": [")
       except:
         print("[Create] >> Fail")
+    return True
 
 
   def _save(self, check_point):
-    text = str(check_point)
+    if str(check_point) == '[]' or str(check_point) == '[,]':
+      return _
+    else:
+      text = str(check_point)
 
-    text = re.sub('^\[', '', text)
-    text = re.sub('\]$', ',', text)
+      text = re.sub('^\[', '', text)
+      text = re.sub('\]$', '', text)
 
-    with open(f'./{self.saveName}.text', 'a') as fp:
-      fp.write(text)
-      # json.dump(self.all['Results'], fp)
-    print(f"[Save] >> Save at current directory, ./{self.saveName}.text")
+      
+      with open(f'./{self.saveName}.text', 'a', encoding='utf-8') as fp:
+        fp.write(text)
+          # json.dump(self.all['Results'], fp)
+      print(f"[Save] >> Saving check_point at current directory, ./{self.saveName}.text")
+      
 
   def _endFile(self):
     # ast.literal_eval(text)
     try:
-      with open(f'./{self.saveName}.text', 'a') as fp:
+      with open(f'./{self.saveName}.text', 'a', encoding='UTF-8') as fp:
         fp.write(']}')
       
-      with open(f'./{self.saveName}.text', 'r') as fp:
-        text = fp.read()
-        text_dict = ast.literal_eval(text)
+      try:
+        with open(f'./{self.saveName}.text', 'r', encoding='UTF-8') as fp:
+          text = fp.read()
+          text_dict = ast.literal_eval(text)
         
       
-      os.rename(f'./{self.saveName}.text', f'./{self.saveName}.json')
+      # os.rename(f'./{self.saveName}.text', f'./{self.saveName}.json')
       # os.remove(f"./{self.saveName}.text")
       # print(text_dict)
-
-      with open(f'./{self.saveName}.json', 'w') as fp:
-        json.dump(text_dict, fp)
-
-
-      print(f"[Close] >> Close and save ./{self.saveName}.json file to save data.")
+        with open(f'./{self.saveName}.json', 'w', encoding='UTF-8') as fp:
+          json.dump(text_dict, fp)
+        print(f"[Close] >> Closed and save in ./{self.saveName}.json file the data.")
+      except:
+        print(f"[Close] >> Fail to save the data ./{self.saveName}.json file.")
 
     except:
       print('[Close] >> Fail')
@@ -203,32 +224,52 @@ class SearchWeb():
   @timer
   def _extract(self, pool, data):
     try:
-      self.papers_text = pool.map(self._json, data['Response'])
+      # print("data")
+      # print(data)
+
+      # print("data['Response'].tolist()")
+      # print(data['Response'].tolist())
+      self.papers_text = pool.map(self._json, data['Response'].tolist())
+      # print("self.papers_text")
+      # print(self.papers_text)
+
+      if self._start:
+        print('\n ---')
+        print(f"Total Results: {self.papers_text[0]['totalResults']}")
+        print(f"Total Pages: {self.papers_text[0]['totalPages']}")
+        print(f"Query Suggestions: {self.papers_text[0]['querySuggestions']}")
+        print('--- \n')
+        self.totalPages = self.papers_text[0]['totalPages']
+        self.totalResults = self.papers_text[0]['totalResults']
+        self._start = False
+
+      
+      print("[_extract] >> extracting relevant data.")
       check_point= [{"Page": {"N_Page":page['query']['page'],
                                    "N_Papers":len(page['results']),
                                    "Papers": pool.map(self._paperExtract,
                                                       page['results'])}} for page in self.papers_text]
 
 
+      # print(check_point)
       if self.saveFile:
         try:
           self._save(check_point)
         except:
           print("_save >> [Fail] to save.")
+          print("_extract>> [Fail], see .badcall to reextract content.")
+          self.badcall.append(self.papers_text)
+          # print(self.badcall)
       else:
         self.all["Results"].extend(check_point)
 
+
     except:
-      print("_extract>> [Fail], see .papers_text to reextract content.")
+      print("_extract>> [Fail], see .badcall to reextract content.")
       self.badcall.append(self.papers_text)
+      print(self.badcall)
     
-    if self._start:
-      print('\n ---')
-      print(f"Total Results: {self.papers_text[0]['totalResults']}")
-      print(f"Total Pages: {self.papers_text[0]['totalPages']}")
-      print(f"Query Suggestions: {self.papers_text[0]['querySuggestions']}")
-      print('--- \n')
-      self._start = False
+    
 
   # def _data(self, data):
   #   if type(self.datasource) == str:
@@ -238,35 +279,68 @@ class SearchWeb():
 
   @timer
   def _runtime(self, pool, pages):
+    self.totalPages = 0
 
+    find = False
+    
     while True:
       if self.saveFile:
-        self._startFile()
+        close = self._startFile(find)
       
+      print('\n')
       print('[_runtime]>> Start searching...')
+      # print(self.totalPages)
+      # print(self.totalResults)
+      # print(self.n)
+
+      if self.totalResults < self.n:
+        print('Entrei aq')
+        self.n = self.totalResults
+        pages = list(range(self._page, self.totalPages))
       
-      res = pool.map(self._query, pages)
-      self.codes = [[x[0], x[1],x[0].status_code] for x in res]
-      resultData = pd.DataFrame(self.codes, columns=["Response", "Page", "Code"])
-      resultData.set_index("Page")
-      
-      if resultData.query("Code !=200").size == 0:
-        # self._data(resultData)
-        self._extract(pool, resultData.query("Code ==200"))
-        if self.saveFile:
-          self._endFile()
-        break
-      else:
-        print("Bad call of pages:")
-        # self._data(resultData.query("Code == 200"))
-        # self.datasource.append(resultData.query("Code ==200"))
-        pages = resultData.query("Code !=200").index.values.tolist()
-        print(pages)
-        print(f"Tentando de novo daqui a {self.sleeptry/60} min...")
-        self._extract(pool, resultData.query("Code ==200"))
-        if self.saveFile:
-          self._endFile()
-        sleep(self.sleeptry)
+      try:
+        res = pool.map(self._query, pages)
+        # print(res)
+        self.codes = [[x[0], x[1], x[0].status_code] for x in res]
+        resultData = pd.DataFrame(self.codes, columns=["Response", "Page", "Code"])
+        resultData.set_index("Page")
+        
+        if resultData.query("Code !=200").size == 0:
+          # self._data(resultData)
+          self._extract(pool, resultData.query("Code ==200"))
+          if self.saveFile:
+            if close:
+              self._endFile()
+              find = True
+          break
+        else:
+          find = False
+
+          if resultData.query("Code ==200").size != 0:
+            self._extract(pool, resultData.query("Code ==200"))
+            if self.saveFile:
+              if close:
+                find = True
+                self._endFile()
+              
+          print("Bad call of pages:")
+          # self._data(resultData.query("Code == 200"))
+          # self.datasource.append(resultData.query("Code ==200"))
+          pages = resultData.query("Code !=200")["Page"].values.tolist()
+          print(pages)
+          try:
+            with open("./BadCalls.text", 'w', encoding='UTF-8') as fp:
+              fp.write(str(pages))
+          except:
+            print("Fail to save badcalls")
+          print(f"Tentando de novo daqui a {self.sleeptry/60} min...")
+
+
+          sleep(self.sleeptry)
+      except:
+        pass
+      print("---")
+        
         
     
     
@@ -274,39 +348,50 @@ class SearchWeb():
 
 
   @timer
-  def get(self, n = 10, page = 1):
+  def get(self, n = 10, page = 1, pages = []):
+    self._pages = pages
+    self.n = n
     self._page = page
+    self.totalResults = 1000000000000000000000
     self.post["pageSize"] = 10
     self.post["page"] = page
     self.all = {"Results": []}
+    print('.post >>')
+    print(self.post)
     # self.datasource = ''
+    print("\n")
     print("Searching...")
     print(self.all)
 
     
 
     with mp.Pool(self.poolCPU) as pool:
-      if n > 10:
-        pages = list(range(self._page, (n//10)+self._page))
+      if self.n > 10:
+    
+        if len(pages) != 0:
+          self._pages = pages
+        else:  
+          self._pages = list(range(self._page, (self.n//10)+self._page))
       # for page in range(n//10):
-        self._runtime(pool,pages)
+        self._runtime(pool, self._pages)
           
         if n%10>0:
-          pages = [n//10+self._page]
-          self.post["pageSize"] = n%10
+          self._pages = [self.n//10+self._page]
+          self.post["pageSize"] = self.n%10
 
-          self._runtime(pool, pages)
+          self._runtime(pool, self._pages)
           
       else:
         # pass
-        pages = [self._page]
+        self._pages = [self._page]
         self.post["page"] = self._page
-        self.post["pageSize"] = n
+        self.post["pageSize"] = self.n
 
-        self._runtime(pool, pages)
+        self._runtime(pool, self._pages)
 
     
       # self._extract(pool, self.datasource)
+
 
 ##### Description #####
 # ex. {"params": value} 
@@ -318,6 +403,7 @@ class SearchWeb():
 #      }
 ##### Params that can pass in SearchWeb(params = value): #####
 # data = '''{
+#     "Savename": 'Data'
 #     "sleeptry": 3 (seconds)
 #     "poolCPU": 4 (Number of clusters, CPU)
 #     "save": False
@@ -392,4 +478,15 @@ class SearchWeb():
 
 ### Discoment here to have a script
 if __name__ == '__main__':
-  SearchWeb().get(2000)
+  SearchWeb(
+    search= "decision making+optimization+artificial intelligence",
+    sort= "influence",
+    Savename = "influence",
+    save=True,
+    poolCPU = 4,
+    sleeptry = 3.5*60,
+    venues = [],
+    publicationTypes = ['JournalArticle'],
+    fieldsOfStudy = [],
+    getQuerySuggestions = True
+    ).get(20000, page = 1)
