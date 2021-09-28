@@ -52,18 +52,19 @@ class SearchAPI():
     # print("_query")
     params = self.params.copy()
     if offset + params['limit'] >= 10000:
-      params['limit'] = str(10000 - offset) 
+      params['limit'] = 10000 - offset - 1
+      params['offset'] = offset
     else:
-      params['offset'] = str(offset)
-    # print(params)
+      params['offset'] = offset
     # post["page"] = page
+    # print(params)
     try:
       # &
       url = self._api +"?query=" + str(params['query']) + "&limit=" + str(params['limit']) + "&fields=" + str(params['fields']) + "&offset=" +  str(params['offset'])
       # print(url)
       res = requests.get(url, timeout=15)
       # sleep(self.sleeptry)
-      print(res)
+      # print(res)
       res.encoding = 'utf-8'
       return [res, offset, res.status_code]
     except:

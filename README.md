@@ -1,1 +1,2 @@
-# S2Search
+# auto-slr
+(semi) automated systematic literature review
