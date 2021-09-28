@@ -51,14 +51,17 @@ class SearchAPI():
   def _query(self, offset):
     # print("_query")
     params = self.params.copy()
-    if offset + params['limit'] > 10000:
-      params['limit'] = 10000 - offset 
+    if offset + params['limit'] >= 10000:
+      params['limit'] = str(10000 - offset) 
     else:
-      params['offset'] = offset
+      params['offset'] = str(offset)
     # print(params)
     # post["page"] = page
     try:
-      res = requests.get(self._api, params, timeout=15)
+      # &
+      url = self._api +"?query=" + str(params['query']) + "&limit=" + str(params['limit']) + "&fields=" + str(params['fields']) + "&offset=" +  str(params['offset'])
+      # print(url)
+      res = requests.get(url, timeout=15)
       # sleep(self.sleeptry)
       print(res)
       res.encoding = 'utf-8'
@@ -138,8 +141,10 @@ class SearchAPI():
           # self._data(resultData.query("Code == 200"))
           # self.datasource.append(resultData.query("Code ==200"))
           offsets = resultData.query("Code !=200")["Page"].values.tolist()
+          print(offsets)
           err = resultData.query("Code !=200")["Response"].tolist()
           err = [x.text for x in err]
+          print('Erros: ')
           print(err)
           try:
             with open("./BadCalls.text", 'w', encoding='UTF-8') as fp:
@@ -163,7 +168,8 @@ class SearchAPI():
 
   @timer
   def get(self, n = 10, offset = 0, papers = []):
-    self.n = n
+    self.n = 10000 if n > 10000 else n
+    print(self.n)
     self._offset = offset
     # self.post["pageSize"] = 10
     # self.post["page"] = page
@@ -184,8 +190,9 @@ class SearchAPI():
           self._offsets = papers
         else:
           self._offsets = list(range(self._offset, (self.n//100)+self._offset))
-          lista = [x*100 + 1 for x in self._offsets[1:]]
-          lista.insert(0,self._offsets[0])
+          lista = [x*100 for x in self._offsets]
+          # lista.insert(0,self._offsets[0])
+          # print(lista)
           offsets = lista
           
           print("offsets: ")
@@ -216,11 +223,12 @@ class SearchAPI():
     self.all = pd.concat(self.all, ignore_index=True)
 
 
+
 if __name__ == '__main__':
   SearchAPI(
     search="decision making+optimization+artificial intelligence",
     fields='paperId,externalIds,url,title,abstract,venue,year,referenceCount,citationCount,influentialCitationCount,isOpenAccess,fieldsOfStudy,authors',
     sleeptry = 1*20, # seconds
     save=True,
-    Savename = "dataAPI").get(10000)
+    Savename = "dataAPI").get(11000)
 
