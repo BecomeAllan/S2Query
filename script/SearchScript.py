@@ -217,5 +217,10 @@ class SearchAPI():
 
 
 if __name__ == '__main__':
-  SearchAPI(sleeptry = 1*20, save=True, Savename = "dataAPI").get(10000)
+  SearchAPI(
+    search="decision making+optimization+artificial intelligence",
+    fields='paperId,externalIds,url,title,abstract,venue,year,referenceCount,citationCount,influentialCitationCount,isOpenAccess,fieldsOfStudy,authors',
+    sleeptry = 1*20, # seconds
+    save=True,
+    Savename = "dataAPI").get(10000)
 
