@@ -117,9 +117,9 @@ class SearchWeb():
     try:
       res = requests.post(url, json=post, timeout=15)
       res.encoding = 'utf-8'
-      return [res, page]
+      return [res, page, res.status_code]
     except:
-      return [{"status_code": 400}, page ]
+      return [None, page, 400 ]
       
 
   def _json(self, res):
@@ -294,15 +294,13 @@ class SearchWeb():
       # print(self.n)
 
       if self.totalResults < self.n:
-        print('Entrei aq')
         self.n = self.totalResults
         pages = list(range(self._page, self.totalPages))
       
       try:
         res = pool.map(self._query, pages)
         # print(res)
-        self.codes = [[x[0], x[1], x[0].status_code] for x in res]
-        resultData = pd.DataFrame(self.codes, columns=["Response", "Page", "Code"])
+        resultData = pd.DataFrame(res, columns=["Response", "Page", "Code"])
         resultData.set_index("Page")
         
         if resultData.query("Code !=200").size == 0:
