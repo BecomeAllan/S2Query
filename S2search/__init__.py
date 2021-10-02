@@ -52,6 +52,6 @@ if missing_dependencies:
 del hard_dependencies, dependency, missing_dependencies
 
 
-from SearchScript import S2paperAPI
-from SearchWebScript import S2paperWeb
+from .SearchScript import S2paperAPI
+from .SearchWebScript import S2paperWeb
 
