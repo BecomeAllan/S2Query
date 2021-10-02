@@ -41,7 +41,7 @@ The return in `.all` is a Pandas [DataFrame](https://pandas.pydata.org/docs/refe
 
 ## S2paperWeb()
 
-The `S2paperWeb()`, consume the content in the page in Semantic Scholar. See the [Link](https://www.semanticscholar.org/) to understand more about the API:
+The `S2paperWeb()`, consume the content in the [page](https://www.semanticscholar.org/) in Semantic Scholar.
 
 The return in `.all` is a dictionary arranged about the pages founded.
 
