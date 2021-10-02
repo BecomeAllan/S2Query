@@ -1,7 +1,7 @@
 # How to install
 
 ```python
-pip install S2search==1.1.2
+pip install S2search
 ```
 
 # S2search
