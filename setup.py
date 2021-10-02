@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-VERSION = '1.1.3'
+VERSION = '1.1.2'
 DESCRIPTION = 'Semantic Scholar paper api consuming'
 LONG_DESCRIPTION = 'A package that allows to consuming the API of Semantic Scholar and the web content of all papers that they make available.'
 
