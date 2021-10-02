@@ -21,6 +21,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
+    package_data={'S2search': ['VERSION']},
     # packages=['S2search'],
     install_requires=["requests", "pandas"],
     keywords=['python', 'Semantic Scholar', 'API', 'Papers', 'semantic-scholar', 'papers'],
