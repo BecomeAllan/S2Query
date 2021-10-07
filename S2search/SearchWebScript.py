@@ -18,28 +18,45 @@ from time import sleep, time
 #     Print the time consuming of a function
 #
 def timer(fun):
-  def warper(*args,**kwargs):
+  def warper(*args, **kwargs):
     start = time()
-    d = fun(*args,**kwargs)
+    d = fun(*args, **kwargs)
     end = time()
-    print(f"[{fun.__name__}]>> Demorou {round(end-start,2)}s")
+    print(f"[{fun.__name__}]>> Took {round(end-start,2)}s")
     return d
   return warper
 
 
 
+
 class S2paperWeb():
   """
-- Description:
+  Description
+  ~~~~~~~~~~~~~~~~~~~~~
+  
     Class that when instantiate in a variable consumes the content
     of Semantic Scholar webpage about the papers.
     
-- Parameters:
-    - `S2paperWeb(poolCPU = 4, sleeptry = 5)`:
-        - `poolCPU : (int)` |
+  Parameters
+  ~~~~~~~~~~~~~~~~~~~~~
+
+  `S2paperWeb(poolCPU = 4, sleeptry = 5)`:
+    - `poolCPU : (int)` |
           Number of cores of CPU to make multiples request in the same time.
-        - `sleeptry : (float)` |
+    - `sleeptry : (float)` |
           Seconds to wait for try again when Semantic Scholar block the requests.
+
+  Example
+  ~~~~~~~~~~~~~~~~~~~~~
+
+   >>> from S2search import S2paperWeb
+   >>> m = S2paperWeb()
+   >>> m.get("artificial intelligence+Deep Learning", n=3, sort = "total-citations", fieldsOfStudy = ['biology'])
+   >>> len(m.all['Results'][0]['Page']['Papers'])
+   3
+   >>> m.all['Results'][0]['Page']['Papers'][0].keys()
+   dict_keys(['authors', 'id', 'socialLinks', 'title', 'paperAbstract', 'year', 'venue', 'citationContexts', 'citationStats', 'sources', 'externalContentStats', 'journal', 'presentationUrls', 'links', 'primaryPaperLink', 'alternatePaperLinks', 'entities', 'entityRelations', 'blogs', 'videos', 'githubReferences', 'scorecardStats', 'fieldsOfStudy', 'pubDate', 'pubUpdateDate', 'badges', 'tldr'])
+
 """
   def __init__(self, poolCPU = 4, sleeptry=5):
     self.post = {}
@@ -56,60 +73,65 @@ class S2paperWeb():
     """
     .get()
     ~~~~~~~~~~~~~~~~~~~~~
+    
     `S2paperWeb().get(search, n = 10, offset = 0, papers = [], save = False, saveName = Data)`
-    - Parameters:
-      - `search : (str)` |
+    
+    Parameters
+    ~~~~~~~~~~~~~~~~~~~~~
+    - `search : (str)` |
           The main query in Semantic Scholar API about the papers.
-      - `n : (int)` |
+    - `n : (int)` |
           The number of papers to get.
-       - `save : (bool)` |
+    - `save : (bool)` |
           If true, will save the data set in a file csv at the current directory. the default is False.
-      - `saveName : (str)` |
+    - `saveName : (str)` |
           The name of the file when the save is set True.
-      - `page : (int)` |
+    - `page : (int)` |
           Where start to return of the papers, the default is 1, that is the first paper found.
-      - `sort : (str)` |
+    - `sort : (str)` |
           The order of the return paper, the options are `("total-citations", "influence", "pub-date", "relevance")`.
           The default is "relevance".
-      - `authors : list(str)` |
+    - `authors : list(str)` |
           The filter of authors. The default is `[]`.
-      - `coAuthors : list(str)` |
+    - `coAuthors : list(str)` |
           The filter of cothors. The default is `[]`.
-      - `venues : list(str)` |
+    - `venues : list(str)` |
           The filter of venues. The options are `["PloS one", "AAAI", "Scientific reports", "IEEE Access", "ArXiv",
           "Expert Syst. Appl.""ICML", "Neurocomputing", "Sensors", "Remote. Sens."]`. The default is `[]`.
-      - `yearFilter : dict({"min": int, "max": int})` |
+    - `yearFilter : dict({"min": int, "max": int})` |
           The filter of year. Ex. `{"min": 1999, "max": 2021}`. The default is `None`.
-      - `requireViewablePdf : (bool)` |
+    - `requireViewablePdf : (bool)` |
           If the paper have pdf.
-      - `publicationTypes : list(str)` |
+    - `publicationTypes : list(str)` |
           The filter of type publication, the options are `["ClinicalTrial","CaseReport","Editorial","Study",
           "Book","News","Review","Conference","LettersAndComments","JournalArticle"]`. The default is `[]`
-      - `fieldsOfStudy : list(str)` |
+    - `fieldsOfStudy : list(str)` |
           The filter of fields of study, the options are `["biology","art","business",
           "computer-science","chemistry","economics","engineering","environmental-science",
           "geography","geology","history","materials-science","mathematics","medicine","philosophy",
           "physics","political-science","psychology","sociology"]`. The default is `[]`.
-      - `useFallbackRankerService : (bool)` |
+    - `useFallbackRankerService : (bool)` |
           Fall back to rank the match papers. The defalt is `False`.
-      - `useFallbackSearchCluster : (bool)` |
+    - `useFallbackSearchCluster : (bool)` |
           Fall back to cluster the match papers. The defalt is `False`.
-      - `hydrateWithDdb : (bool)` |
+    - `hydrateWithDdb : (bool)` |
           The defalt is `True`.
-      - `includeTldrs : (bool)` |
+    - `includeTldrs : (bool)` |
           AI based summary abstracts of papers. The defalt is `True`.
-      - `"tldrModelVersion" : (str)` |
+    - `"tldrModelVersion" : (str)` |
           The AI version. The default is `"v2.0.0"`
-      - `performTitleMatch: (bool)` |
+    - `performTitleMatch: (bool)` |
           Match papers about title. The defalt is `True`.
-      - `includeBadges: (bool)` |
+    - `includeBadges: (bool)` |
           Some bagdes about the papers. The defalt is `True`.
-      - `getQuerySuggestions: (bool)` |
+    - `getQuerySuggestions: (bool)` |
           Some query suggestions. The defalt is `True`.
-      - `papers : list(int)` |
+    - `papers : list(int)` |
           A list of positions of the papers (0 is the first one), if pass a list, the parameters (n, offset)
           have no effect in the main query (search). The default is a empty list [].
-    - Returns:
+    
+    Returns
+    ~~~~~~~~~~~~~~~~~~~~~
         When the parameter (save) is False, the data set found will be in the (.all) variable as a dictionary
         in the class instantiated.
     """
@@ -155,7 +177,7 @@ class S2paperWeb():
     "includeTldrs": self._includeTldrs,
     "performTitleMatch": self._performTitleMatch,
     "includeBadges": self._includeBadges,
-    "tldrModelVersion": "v2.0.0",
+    "tldrModelVersion": self._tldrModelVersion,
     "getQuerySuggestions": self._getQuerySuggestions,
     }
     
@@ -455,14 +477,14 @@ class S2paperWeb():
 
 
 ### Discoment here to have a script
-if __name__ == '__main__':
-  S2paperWeb().get(
-    search= "decision making+optimization+artificial intelligence",
-    n = 3, page = 1,
-    sort= "influence",
-    saveName = "influence_data",
-    save=True,
-    venues = [],
-    publicationTypes = ['JournalArticle'],
-    fieldsOfStudy = [],
-    getQuerySuggestions = True)
+# if __name__ == '__main__':
+#   S2paperWeb().get(
+#     search= "decision making+optimization+artificial intelligence",
+#     n = 3, page = 1,
+#     sort= "influence",
+#     saveName = "influence_data",
+#     save=True,
+#     venues = [],
+#     publicationTypes = ['JournalArticle'],
+#     fieldsOfStudy = [],
+#     getQuerySuggestions = True)

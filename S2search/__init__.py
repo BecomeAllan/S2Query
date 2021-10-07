@@ -8,7 +8,10 @@ Basic usage:
 
 We have two main classes, that can handle the paper data:
 
-- S2paperAPI():
+S2paperAPI()
+~~~~~~~~~~~~~~~~~~~~~
+
+Search paper using the data provided by Seamantic Scholar API papers: <https://api.semanticscholar.org/graph/v1>.
 
    >>> from S2search import S2paperAPI
    >>> m = S2paperAPI()
@@ -20,7 +23,10 @@ We have two main classes, that can handle the paper data:
    1    Explanation in Artificial Intelligence: Insigh...
    Name: title, dtype: object
 
-- S2paperWeb():
+S2paperWeb()
+~~~~~~~~~~~~~~~~~~~~~
+
+Search paper using the data provided by the page of Semantic Scholar: <https://www.semanticscholar.org>.
 
    >>> from S2search import S2paperWeb
    >>> m = S2paperWeb()

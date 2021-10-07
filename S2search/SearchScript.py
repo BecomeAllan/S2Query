@@ -24,16 +24,33 @@ def timer(fun):
 
 class S2paperAPI():
   """
-- Description:
+  Description
+  ~~~~~~~~~~~~~~~~~~~~~
     Class that when instantiate in a variable consumes the api
-    of Semantic Scholar about the papers.
+    of Semantic Scholar API about the papers.
     
-- Parameters:
-    - `SearchAPI(poolCPU = 4, sleeptry = 5)`:
-        - `poolCPU : (int)` |
-          Number of cores of CPU to make multiples request in the same time.
-        - `sleeptry : (float)` |
-          Seconds to wait for try again when Semantic Scholar block the requests.
+  Parameters
+  ~~~~~~~~~~~~~~~~~~~~~
+  
+  `SearchAPI(poolCPU = 4, sleeptry = 5)`:
+    - `poolCPU : (int)` |
+      Number of cores of CPU to make multiples request in the same time.
+    - `sleeptry : (float)` |
+      Seconds to wait for try again when Semantic Scholar block the requests.
+  
+  Example
+  ~~~~~~~~~~~~~~~~~~~~~
+  
+   >>> from S2search import S2paperAPI
+   >>> m = S2paperAPI()
+   >>> m.get("artificial intelligence", n=2)
+   >>> m.all.shape
+   (2, 12)
+   >>> m.all['title']
+   0    Explainable Artificial Intelligence (XAI): Con...
+   1    Explanation in Artificial Intelligence: Insigh...
+   Name: title, dtype: object
+
 """
   def __init__(self, poolCPU=4, sleeptry=5):
     self.sleeptry = sleeptry
@@ -48,25 +65,32 @@ class S2paperAPI():
     """
     .get()
     ~~~~~~~~~~~~~~~~~~~~~
+    
     `SearchAPI().get(search, n = 10, offset = 0, papers = [], save = False, saveName = Data, fields = ["title","abstract","isOpenAccess","fieldsOfStudy"])`
-    - Parameters:
-      - `search : (str)` |
+    
+    Parameters
+    ~~~~~~~~~~~~~~~~~~~~~
+    
+    - `search : (str)` |
           The main query in Semantic Scholar API about the papers.
-      - `n : (int)` |
+    - `n : (int)` |
           The number of papers to get, the maximum is 10.000.
-      - `offset : (int)` |
+    - `offset : (int)` |
           Where start to return the papers, the default is 0,
           that is the first paper found.
-      - `papers : list(int)` |
+    - `papers : list(int)` |
           A list of positions of the papers (0 is the first one), if pass a list, the parameters (n, offset)
           have no effect in the main query (search). The default is a empty list [].
-      - `save : (bool)` |
+    - `save : (bool)` |
           If true, will save the data set in a file csv at the current directory. the default is False.
-      - `saveName : (str)` |
+    - `saveName : (str)` |
           The name of the file when the save is set True.
-      - `fields : list(str)` |
+    - `fields : list(str)` |
           The dataframe columns that the Semantic Scholar API returns, see the documentation in <https://api.semanticscholar.org/graph/v1#operation/get_graph_get_paper_search>.
-    - Returns:
+    
+    Returns
+    ~~~~~~~~~~~~~~~~~~~~~
+    
         When the parameter (save) is False, the data set found will be in the (.all) variable as pandas
         Dataframe of the class instantiated.
     """
@@ -76,9 +100,12 @@ class S2paperAPI():
     self._offset = offset
     self.all = []
     """
-    A dataFrame with all content as pandas DataFrame
+    A dataFrame with all content as pandas DataFrame.
     """
     self.n = n
+    """
+    Number of papers.
+    """
 
     self.params = {
     "query": search,
@@ -239,59 +266,56 @@ class S2paperAPI():
       raise error
 
 
- 
-   
 
-
-if __name__ == '__main__':
-  import argparse
-  import requests
-  import json
-  import multiprocessing as mp
-  import pandas as pd
-  from time import sleep, time
-  import os
+# if __name__ == '__main__':
+#   import argparse
+#   import requests
+#   import json
+#   import multiprocessing as mp
+#   import pandas as pd
+#   from time import sleep, time
+#   import os
   
-  parser = argparse.ArgumentParser(description="Check web to see more...")
-  parser.add_argument(
-    "search",
-    type=str,
-    help= "Search example> 'decision making+optimization+artificial intelligence'"
-  )
-  parser.add_argument(
-    "-n",
-    "--n",
-    type=int,
-    help= "Number of papers to return (Max. 10.000)"
-  )
-  parser.add_argument(
-    "-f",
-    "--fields",
-    type=list,
-    help= """Fields of the columns (ex. ["title","abstract","isOpenAccess","fieldsOfStudy"]), see: https://api.semanticscholar.org/graph/v1#operation/get_graph_get_paper_search"""
-  )
-  parser.add_argument(
-    "-s",
-    "--saveName",
-    type=str,
-    help= "Name of the file to save (ex. 'Data.csv')."
-  )
+#   parser = argparse.ArgumentParser(description="Check web to see more...")
+#   parser.add_argument(
+#     "search",
+#     type=str,
+#     help= "Search example> 'decision making+optimization+artificial intelligence'"
+#   )
+#   parser.add_argument(
+#     "-n",
+#     "--n",
+#     type=int,
+#     help= "Number of papers to return (Max. 10.000)"
+#   )
+#   parser.add_argument(
+#     "-f",
+#     "--fields",
+#     type=list,
+#     help= """Fields of the columns (ex. ["title","abstract","isOpenAccess","fieldsOfStudy"]), see: https://api.semanticscholar.org/graph/v1#operation/get_graph_get_paper_search"""
+#   )
+#   parser.add_argument(
+#     "-s",
+#     "--saveName",
+#     type=str,
+#     help= "Name of the file to save (ex. 'Data.csv')."
+#   )
   
-  args = parser.parse_args()
+#   args = parser.parse_args()
   
-  fields = args.fields if args.fields else ["paperId",
-                                             "title",
-                                             "abstract",
-                                             "isOpenAccess",
-                                             "fieldsOfStudy",
-                                             "url",
-                                             "venue", 
-                                             "year", 
-                                             "referenceCount",
-                                             "citationCount",
-                                             "influentialCitationCount",
-                                             "authors"]
+#   fields = args.fields if args.fields else ["paperId",
+#                                              "title",
+#                                              "abstract",
+#                                              "isOpenAccess",
+#                                              "fieldsOfStudy",
+#                                              "url",
+#                                              "venue", 
+#                                              "year", 
+#                                              "referenceCount",
+#                                              "citationCount",
+#                                              "influentialCitationCount",
+#                                              "authors"]
   
-  S2paperAPI().get(
-    search=args.search, n=args.n, save=True, saveName= args.saveName, fields = fields)
+#   S2paperAPI().get(
+#     search=args.search, n=args.n, save=True, saveName= args.saveName, fields = fields)
 
