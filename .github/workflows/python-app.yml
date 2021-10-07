@@ -38,12 +38,3 @@ jobs:
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
-    - name: Deploy release
-#       if: startsWith(github.ref, 'refs/tags')
-      uses: WebFreak001/upload-asset@v1.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # automatically provided by github actions
-      with:
-        file: ./dist # path to archive to upload
-        mime: application/zip # required by GitHub API
-        name: '${TAG}' # name pattern to upload the release as
