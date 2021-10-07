@@ -30,10 +30,7 @@ jobs:
       run: >-
         python -m
         build
-        --sdist
-        --wheel
-        --outdir dist
-      
+
     - name: Deploy release
       uses: WebFreak001/upload-asset@v1.0.0
       env:
