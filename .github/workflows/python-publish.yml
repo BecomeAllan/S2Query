@@ -27,13 +27,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install build
     - name: Build package
-      run: python -m build
+      run: >-
+        python -m
+        build
+        --sdist
+        --wheel
+        --outdir dist
       
     - name: Deploy release
       uses: WebFreak001/upload-asset@v1.0.0
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # automatically provided by github actions
       with:
-          file: ./myapp.zip # path to archive to upload
+          file: dist # path to archive to upload
           mime: application/zip # required by GitHub API
-          name: '${TAG}.zip' # name pattern to upload the release as
+          name: '${TAG}' # name pattern to upload the release as
