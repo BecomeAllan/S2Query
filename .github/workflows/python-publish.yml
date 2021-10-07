@@ -13,8 +13,7 @@ on:
     types: [published]
 
 jobs:
-  deploy:
-
+  nightly:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,8 +28,12 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+      
+    - name: Deploy release
+      uses: WebFreak001/upload-asset@v1.0.0
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # automatically provided by github actions
       with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+          file: ./myapp.zip # path to archive to upload
+          mime: application/zip # required by GitHub API
+          name: '${TAG}.zip' # name pattern to upload the release as
