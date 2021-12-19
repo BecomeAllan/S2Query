@@ -1,11 +1,9 @@
-
 import requests
 import json
 import multiprocessing as mp
 import pandas as pd
 from time import sleep, time
 import os
-
 
 # (Decorantor)
 # - Description:
@@ -102,7 +100,7 @@ class S2paperAPI():
     """
     A dataFrame with all content as pandas DataFrame.
     """
-    self.n = n
+    self.n = 10000 if n > 10000 else n
     """
     Number of papers.
     """
@@ -131,12 +129,15 @@ class S2paperAPI():
           self.params['limit'] = 1
           self.n = len(papers)
     else:
-          self._offsets = list(range(self._offset, (self.n//100)+self._offset))
+          inf = self._offset//100
+          sup = (self.n//100)+self._offset//100
+
+          if inf == sup:
+            self._offsets = [inf]
+          else:
+            self._offsets = list(range(inf, sup))
           self.params['limit'] = 100
-          lista = [x*100 for x in self._offsets]
-          offsets = lista
-          
-    self.n = 10000 if n > 10000 else n
+          offsets = [x*100 for x in self._offsets if x*100 < 10000]
     
     print("\n")
     print("Searching...")
@@ -151,18 +152,18 @@ class S2paperAPI():
         if len(papers) == 0:
           if n%100>0:
             self.params['limit'] = n%100
-            offsets = [lista[-1] + 100]
+            offsets = [offsets[-1] + 100]
 
             self._runtime(pool, offsets)
           
+          
       else:
         if len(papers) == 0:  
-          offsets = [self._offset]
+          offsets = self._offsets
           self.params['limit'] = n
         
         self._runtime(pool, offsets)
-
-
+      
     self.all = pd.concat(self.all, ignore_index=True)
     """
     A dataFrame with all content as pandas DataFrame
@@ -188,6 +189,8 @@ class S2paperAPI():
         
         if resultData.query("Code !=200").size == 0:
           self._extract(pool, resultData.query("Code ==200"))
+          
+
           break
         
         else:
@@ -196,6 +199,7 @@ class S2paperAPI():
               
           print("Bad call of pages:")
           offsets = resultData.query("Code !=200")["Page"].values.tolist()
+
           print(offsets)
           
           err = resultData.query("Code !=200")["Response"].tolist()
@@ -264,58 +268,3 @@ class S2paperAPI():
       words = os.path.join(os.getcwd(), f'{name}')
       print(f"[Save]>> Error to save the data in {words}")
       raise error
-
-
-
-# if __name__ == '__main__':
-#   import argparse
-#   import requests
-#   import json
-#   import multiprocessing as mp
-#   import pandas as pd
-#   from time import sleep, time
-#   import os
-  
-#   parser = argparse.ArgumentParser(description="Check web to see more...")
-#   parser.add_argument(
-#     "search",
-#     type=str,
-#     help= "Search example> 'decision making+optimization+artificial intelligence'"
-#   )
-#   parser.add_argument(
-#     "-n",
-#     "--n",
-#     type=int,
-#     help= "Number of papers to return (Max. 10.000)"
-#   )
-#   parser.add_argument(
-#     "-f",
-#     "--fields",
-#     type=list,
-#     help= """Fields of the columns (ex. ["title","abstract","isOpenAccess","fieldsOfStudy"]), see: https://api.semanticscholar.org/graph/v1#operation/get_graph_get_paper_search"""
-#   )
-#   parser.add_argument(
-#     "-s",
-#     "--saveName",
-#     type=str,
-#     help= "Name of the file to save (ex. 'Data.csv')."
-#   )
-  
-#   args = parser.parse_args()
-  
-#   fields = args.fields if args.fields else ["paperId",
-#                                              "title",
-#                                              "abstract",
-#                                              "isOpenAccess",
-#                                              "fieldsOfStudy",
-#                                              "url",
-#                                              "venue", 
-#                                              "year", 
-#                                              "referenceCount",
-#                                              "citationCount",
-#                                              "influentialCitationCount",
-#                                              "authors"]
-  
-#   S2paperAPI().get(
-#     search=args.search, n=args.n, save=True, saveName= args.saveName, fields = fields)
-
