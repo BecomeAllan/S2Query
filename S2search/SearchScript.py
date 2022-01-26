@@ -130,7 +130,7 @@ class S2paperAPI():
           self.n = len(papers)
     else:
           inf = self._offset//100
-          sup = (self.n-1)//100+self._offset//100
+          sup = (self.n)//100+self._offset//100
 
           if inf == sup:
             self._offsets = [inf]
