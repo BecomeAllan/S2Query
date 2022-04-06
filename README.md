@@ -126,10 +126,7 @@ To more specific search, this classes have a main function `.get()` with can ham
           The filter of type publication, the options are `["ClinicalTrial","CaseReport","Editorial","Study",
           "Book","News","Review","Conference","LettersAndComments","JournalArticle"]`. The default is `[]`
       - `fieldsOfStudy : list(str)` |
-          The filter of fields of study, the options are `["biology","art","business",
-          "computer-science","chemistry","economics","engineering","environmental-science",
-          "geography","geology","history","materials-science","mathematics","medicine","philosophy",
-          "physics","political-science","psychology","sociology"]`. The default is `[]`.
+          The filter of fields of study, the options are `[ "agricultural-and-food-sciences","art","biology","business","computer-science","chemistry","economics","education","engineering","environmental-science","geography","geology","history","law","linguistics","materials-science","mathematics","medicine","philosophy","physics","political-science","sociology","psychology"]`. The default is `[]`.
       - `useFallbackRankerService : (bool)` |
           Fall back to rank the match papers. The defalt is `False`.
       - `useFallbackSearchCluster : (bool)` |
