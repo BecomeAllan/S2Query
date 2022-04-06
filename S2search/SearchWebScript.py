@@ -170,7 +170,7 @@ class S2paperWeb():
     "requireViewablePdf": self._requireViewablePdf,
     "publicationTypes": self._publicationTypes,
     "externalContentTypes": [],
-    "fieldsOfStudy": self._fieldsOfStudy,
+    "fieldsOfStudy": [x.lower() for x in self._fieldsOfStudy],
     "useFallbackRankerService": self._useFallbackRankerService,
     "useFallbackSearchCluster": self._useFallbackSearchCluster,
     "hydrateWithDdb": self._hydrateWithDdb,
