@@ -179,6 +179,7 @@ class S2paperWeb():
     "includeBadges": self._includeBadges,
     "tldrModelVersion": self._tldrModelVersion,
     "getQuerySuggestions": self._getQuerySuggestions,
+     "useS2FosFields": True
     }
     
     self._pages = pages
