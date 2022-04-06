@@ -263,8 +263,8 @@ class S2paperAPI():
 # Function to save the data
   def save(self, name, data):
     try:
-      data.to_csv(os.path.join(os.getcwd(), f'{name}'))
+      data.to_csv(os.path.join(os.getcwd(), f'{name}.csv'))
     except Exception as error:
-      words = os.path.join(os.getcwd(), f'{name}')
+      words = os.path.join(os.getcwd(), f'{name}.csv')
       print(f"[Save]>> Error to save the data in {words}")
       raise error
