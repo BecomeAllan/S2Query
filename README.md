@@ -1,9 +1,9 @@
 # How to install
 
 ```python
-pip install S2search
+pip install S2query
 ```
-# S2search
+# S2query
 
 Sematic Scholar paper search developed by BecomeAllan (c) 2020 is library that can search papers on [Semantic Scholar page](https://www.semanticscholar.org/) or in the [API](https://api.semanticscholar.org/graph/v1) provided by them.
 

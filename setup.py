@@ -7,13 +7,13 @@ import os
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-VERSION = '1.0.4.3'
+VERSION = '1.0.1'
 DESCRIPTION = 'Semantic Scholar paper api consuming'
 LONG_DESCRIPTION = 'A package that allows to consuming the API of Semantic Scholar and the web content of all papers that they make available.'
 
 # Setting up
 setup(
-    name="S2search",
+    name="S2query",
     version=VERSION,
     author="BecomeAllan (Allan)",
     author_email="<allan.filesia@gmail.com>",
@@ -21,7 +21,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    package_data={'S2search': ['VERSION']},
+    package_data={'S2query': ['VERSION']},
     # packages=['S2search'],
     install_requires=["requests", "pandas"],
     keywords=['python', 'Semantic Scholar', 'API', 'Papers', 'semantic-scholar', 'papers'],
