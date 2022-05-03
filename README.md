@@ -7,7 +7,7 @@ pip install S2query
 
 Sematic Scholar paper search developed by BecomeAllan (c) 2020 is library that can search papers on [Semantic Scholar page](https://www.semanticscholar.org/) or in the [API](https://api.semanticscholar.org/graph/v1) provided by them.
 
-S2search is an request http library, written in Python, to retrieve papers available in Semantic Scholar.
+S2query is an request http library, written in Python, to retrieve papers available in Semantic Scholar.
 
 # Examples
 
@@ -28,7 +28,7 @@ The `S2paperAPI()`, consume the API of Semantic Scholar. See the [Link](https://
 The return in `.all` is a Pandas [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html).
 
 ```python
-   >>> from S2search import S2paperAPI
+   >>> from S2query import S2paperAPI
    >>> m = S2paperAPI()
    >>> m.get("artificial intelligence", n=2)
    >>> m.all.shape
@@ -46,7 +46,7 @@ The `S2paperWeb()`, consume the content in the [page](https://www.semanticschola
 The return in `.all` is a dictionary arranged about the pages founded.
 
 ```python
-   >>> from S2search import S2paperWeb
+   >>> from S2query import S2paperWeb
    >>> m = S2paperWeb()
    >>> m.get("artificial intelligence+Deep Learning", n=3, sort = "total-citations", fieldsOfStudy = ['biology'])
    >>> len(m.all['Results'][0]['Page']['Papers'])
@@ -68,7 +68,7 @@ These classes have an optimization with CPU cores that make multiple requests at
 ## Example
 
 ```python
-   >>> from S2search import S2paperWeb, S2paperAPI
+   >>> from S2query import S2paperWeb, S2paperAPI
    >>> m = S2paperWeb(poolCPU = 2, sleeptry = 60)
    >>> k = S2paperAPI(poolCPU = 4, sleeptry = 5)
 ```
