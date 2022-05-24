@@ -272,9 +272,10 @@ class S2paperWeb():
           print("Bad call of pages:")
           pages = resultData.query("Code !=200")["Page"].values.tolist()
           print(pages)
+
           
           err = resultData.query("Code !=200")["Response"].tolist()
-          err = [x.text for x in err]
+          err = [eval(x.text) for x in err]
           print('Errors: ')
           print(err)
           
@@ -287,6 +288,9 @@ class S2paperWeb():
           else:
             self.badcalls = pages 
           
+          if "Attempted to page beyond available results" in err[0]['error']:
+            break
+
           print(f"Trying again in {round(self.sleeptry/60, 2)} min...")
           sleep(self.sleeptry)
 
@@ -472,20 +476,3 @@ class S2paperWeb():
       print('[Close] >> Fail')
       print(err)
       return False
-  
-
-    
-
-
-### Discoment here to have a script
-# if __name__ == '__main__':
-#   S2paperWeb().get(
-#     search= "decision making+optimization+artificial intelligence",
-#     n = 3, page = 1,
-#     sort= "influence",
-#     saveName = "influence_data",
-#     save=True,
-#     venues = [],
-#     publicationTypes = ['JournalArticle'],
-#     fieldsOfStudy = [],
-#     getQuerySuggestions = True)
