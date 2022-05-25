@@ -344,6 +344,7 @@ class S2paperWeb():
     try:
       res = requests.post(self._url, json=post, timeout=15)
       res.encoding = 'utf-8'
+      sleep(1)
       return [res, page, res.status_code]
     except Exception:
       return [None, page, 400 ]
