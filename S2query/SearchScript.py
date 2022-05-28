@@ -203,7 +203,7 @@ class S2paperAPI():
           print(offsets)
           
           err = resultData.query("Code !=200")["Response"].tolist()
-          err = [x.text for x in err]
+          err = [eval(x.text) for x in err]
           print('Errors: ')
           print(err)
           
@@ -215,6 +215,9 @@ class S2paperAPI():
               print("Fail to save badcalls.")
           else:
             self.badcalls = offsets
+           
+          if "Requested data for this limit and/or offset is not available" in err[0]['error']:
+            break
             
           print(f"Trying again in {round(self.sleeptry/60, 2)} min...")
           sleep(self.sleeptry)
